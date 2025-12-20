@@ -3,7 +3,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "tp3-java-app:latest"
+        IMAGE_NAME = "tp3-java-app"
+        IMAGE_TAG  = "latest"
         CONTAINER_NAME = "tp3-java-container"
         HOST_PORT = "8081"
         CONTAINER_PORT = "8080"
@@ -18,8 +19,8 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/wail-ait/TP-1-jenkins'
+                git branch: '*/main',
+                    url: 'https://github.com/wail-ait/TP-1-jenkins.git'
             }
         }
 
@@ -42,32 +43,39 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                    bat 'docker build -t %IMAGE_NAME% .'
+                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
             }
         }
 
         stage('Deploy (Local Docker)') {
-              steps {
+            steps {
                 bat '''
-                docker stop %CONTAINER_NAME% || exit 0
-                docker rm %CONTAINER_NAME% || exit 0
+                echo Checking existing container...
+
+                docker ps -a --format "{{.Names}}" | findstr %CONTAINER_NAME% >nul
+                if %ERRORLEVEL%==0 (
+                    echo Container exists, stopping and removing...
+                    docker stop %CONTAINER_NAME%
+                    docker rm %CONTAINER_NAME%
+                ) else (
+                    echo Container does not exist, first deployment.
+                )
 
                 docker run -d ^
                   --name %CONTAINER_NAME% ^
                   -p %HOST_PORT%:%CONTAINER_PORT% ^
-                  %IMAGE_NAME%
+                  %IMAGE_NAME%:%IMAGE_TAG%
                 '''
-              }
+            }
         }
-
     }
 
     post {
         success {
-            echo 'Pipeline exécutée avec succès'
+            echo '✅ Pipeline exécutée avec succès'
         }
         failure {
-            echo 'Pipeline échouée'
+            echo '❌ Pipeline échouée'
         }
     }
 }
