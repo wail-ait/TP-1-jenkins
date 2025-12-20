@@ -12,8 +12,6 @@ public class Main {
         System.out.println("Sum: " + sum);
         System.out.println("Difference: " + difference);
 
-        //TIP To <b>Debug</b> code, press <shortcut actionId="Debug"/> or
-        // click the <icon src="AllIcons.Actions.StartDebugger"/> icon in the gutter.
 
     }
 }
