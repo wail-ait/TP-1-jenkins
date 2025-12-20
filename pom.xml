@@ -45,6 +45,20 @@
                 </configuration>
             </plugin>
 
+            <!-- JAR exécutable -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.example.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
             <!-- Exécution des tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
