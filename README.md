@@ -8,3 +8,5 @@ had to configure jdk and maven in jenkins
 webhook didn't trigger build automatically -> trying again
 
 webhook didn't trigger build automatically -> trying again --2
+
+webhook didn't trigger build automatically -> trying again --3
