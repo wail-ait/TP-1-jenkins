@@ -11,7 +11,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: '*/main',
+                git branch: 'main',
                     url: 'https://github.com/wail-ait/TP-1-jenkins'
             }
         }
