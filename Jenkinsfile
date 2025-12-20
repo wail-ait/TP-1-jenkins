@@ -2,6 +2,13 @@ pipeline {
 
     agent any
 
+    environment {
+        IMAGE_NAME = "tp3-java-app:latest"
+        CONTAINER_NAME = "tp3-java-container"
+        HOST_PORT = "8081"
+        CONTAINER_PORT = "8080"
+    }
+
     tools {
         maven 'Maven-3.9'
         jdk 'JDK-17'
@@ -18,31 +25,41 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Compilation du projet'
-                bat 'mvn clean compile'
+                bat 'mvn -B clean package -DskipTests'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Exécution des tests unitaires'
-                bat 'mvn test'
+                bat 'mvn -B test'
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
             }
         }
 
-        stage('Package') {
+        stage('Docker Build') {
             steps {
-                echo 'Packaging du projet'
-                bat 'mvn package'
+                    bat 'docker build -t %IMAGE_NAME% .'
             }
         }
 
-        stage('Deploy') {
-            steps {
-                echo 'Déploiement de l’application'
-                bat 'echo Déploiement simulé'
-            }
+        stage('Deploy (Local Docker)') {
+              steps {
+                bat '''
+                docker stop %CONTAINER_NAME% || exit 0
+                docker rm %CONTAINER_NAME% || exit 0
+
+                docker run -d ^
+                  --name %CONTAINER_NAME% ^
+                  -p %HOST_PORT%:%CONTAINER_PORT% ^
+                  %IMAGE_NAME%
+                '''
+              }
         }
+
     }
 
     post {
