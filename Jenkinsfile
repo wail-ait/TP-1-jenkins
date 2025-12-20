@@ -11,7 +11,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main',
+                git branch: '*/main',
                     url: 'https://github.com/wail-ait/TP-1-jenkins'
             }
         }
@@ -19,28 +19,28 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Compilation du projet'
-                sh 'mvn clean compile'
+                bat 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Exécution des tests unitaires'
-                sh 'mvn test'
+                bat 'mvn test'
             }
         }
 
         stage('Package') {
             steps {
                 echo 'Packaging du projet'
-                sh 'mvn package'
+                bat 'mvn package'
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Déploiement de l’application'
-                sh 'echo Déploiement simulé'
+                bat 'echo Déploiement simulé'
             }
         }
     }
